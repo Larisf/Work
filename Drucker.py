@@ -23,6 +23,10 @@ i = 0																	#unnütze Variable
 
 #Methode für das einkommende Signal
 def dataWritePrint(channel):
+	global ID_Nr
+	global datei_druck
+	global drucker_name
+	global anzahlNummer
 	if GPIO.input(21) == 0														#Eingang abfragen
 		tag = time.strftime("%d.%m.%Y")												#Formatiertes Datum als Tag,Monat,Jahr
 		uhrzeit = time.strftime("%H:%M:%S")											#Formatierte Uhrzeit Stunden,Minuten,Sekunden
