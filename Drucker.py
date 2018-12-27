@@ -12,8 +12,7 @@ GPIO.setmode(GPIO.BCM)															#Das Pin-Schema des Broadcom-Chips verwende
 GPIO.setup(21, GPIO.IN)															#Pin 21 als Eingang setzen
 GPIO.setup(20, GPIO.OUT)														#Pin 20 als Ausgang setzen
 GPIO.output(20,1)															#Pin 20 auf HIGH setzen
-GPIO.add_event_detect(21, GPIO.BOTH, callback = dataWritePrint, bouncetime = 1000)							#Auf Flanke reagieren
-   		
+
 #Variablen
 ID_Nr = "AS3 2701-3200 STE"														#ID_Nr vom Verteiler(Muss angepasst werden!)
 datei_druck = "Pruefstation/Etikett.txt"												#Name der Datei, die gedruckt werden soll
@@ -27,7 +26,7 @@ def dataWritePrint(channel):
 	global datei_druck
 	global drucker_name
 	global anzahlNummer
-	if GPIO.input(21) == 0														#Eingang abfragen
+	if GPIO.input(21) == 0:														#Eingang abfragen
 		tag = time.strftime("%d.%m.%Y")												#Formatiertes Datum als Tag,Monat,Jahr
 		uhrzeit = time.strftime("%H:%M:%S")											#Formatierte Uhrzeit Stunden,Minuten,Sekunden
 		datei_log = "Pruefstation/Log_Files/"+tag+".log"									#Variable für die Log-Datei - Täglich eine neue
@@ -40,10 +39,11 @@ def dataWritePrint(channel):
 		etikett.write("\n\n\nDatum: \t"+ tag+"\n\n\nUhrzeit: "+ uhrzeit+"\t\t\tZS:\t"+ str(anzahlNummer))			#
       		anzahlNummer += 1													#Laufvariable erhöhen
  		etikett.close()														#Druck-Datei schließen
-	else
+	else:
 		os.system("lpr -P  "+drucker_name+" "+ datei_druck) 									#Befehl an das System zum Drucken
 
-
+GPIO.add_event_detect(21, GPIO.BOTH, callback = dataWritePrint, bouncetime = 1000)							#Auf Flanke reagieren
+   		
 #Hauptprogramm
 try:
 	while True:
