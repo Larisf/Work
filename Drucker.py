@@ -1,11 +1,9 @@
 #!/usr/bin/python
 # -*- coding: iso-8859-1 -*-
-import signal
-import subprocess
 import RPi.GPIO as GPIO
 import time
-import sys
 import os
+
 #Define Pins
 INPUT = 21																#Globalen Wert setzen, um bei Änderungen nur eine Zeile ändern zu müssen 
 OUTPUT = 20																#
