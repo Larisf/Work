@@ -8,12 +8,13 @@ import signal
 #Define Pins
 INPUT = 21																#Globalen Wert setzen, um bei Änderungen nur eine Zeile ändern zu müssen 
 OUTPUT = 20																#
+HIGH = 1																#Variable für den HIGH-Zustand definieren
 
 #GPIO setzen zum Empfangen des Druckauftrages
 GPIO.setmode(GPIO.BCM)															#Das Pin-Schema des Broadcom-Chips verwenden
 GPIO.setup(INPUT, GPIO.IN)														#Pin 21 als Eingang setzen
 GPIO.setup(OUTPUT, GPIO.OUT)														#Pin 20 als Ausgang setzen
-GPIO.output(OUTPUT,1)															#Pin 20 auf HIGH setzen
+GPIO.output(OUTPUT,HIGH)															#Pin 20 auf HIGH setzen
 
 #Variablen
 run = True
@@ -36,18 +37,18 @@ def dataWritePrint(channel):
 	global datei_druck
 	global drucker_name
 	global anzahlNummer
-	if GPIO.input(INPUT) == 0:													#Eingang abfragen
+	if GPIO.input(INPUT) == HIGH:													#Eingang abfragen
 		tag = time.strftime("%d.%m.%Y")												#Formatiertes Datum als Tag,Monat,Jahr
 		uhrzeit = time.strftime("%H:%M:%S")											#Formatierte Uhrzeit Stunden,Minuten,Sekunden
-		log = open(datei_log+tag+".log","a")											#Log-Datei öffnen bzw. eine neue erstellen mit dem Datum
-		log.write("ZS: "+str(anzahlNummer)+"\t| "+tag+"-"+uhrzeit+" - Prüfung bestanden\n")					#In die Log-Datei schreiben
+		with open(datei_log+tag+".log","a") as log:										#Log-Datei öffnen bzw. eine neue erstellen mit dem Datum
+			log.write("ZS: "+str(anzahlNummer)+"\t| "+tag+"-"+uhrzeit+" - Prüfung bestanden\n")				#In die Log-Datei schreiben
 		log.close()														#Log-Datei schließen
-		etikett = open(datei_druck,"w")												#Datei zum Druck öffnen
-		etikett.write("Qualitäts- und Funktionsprüfung\nSTW-Verteiler, ID-Nr:"+ID_Nr)						#In die Druck-Datei schreiben
-		etikett.write("\nBaugruppe PIN 1-15 geprüft und Funktion erfolgreich getestet")						#
-		etikett.write("\n\n\nDatum: \t"+ tag+"\n\n\nUhrzeit: "+ uhrzeit+"\t\t\tZS:\t"+ str(anzahlNummer))			#
-      		anzahlNummer += 1													#Laufvariable erhöhen
+		with open(datei_druck,"w") as etikett:											#Datei zum Druck öffnen
+			etikett.write("Qualitäts- und Funktionsprüfung\nSTW-Verteiler, ID-Nr:"+ID_Nr)					#In die Druck-Datei schreiben
+			etikett.write("\nBaugruppe PIN 1-15 geprüft und Funktion erfolgreich getestet")					#
+			etikett.write("\n\n\nDatum: \t"+ tag+"\n\n\nUhrzeit: "+ uhrzeit+"\t\t\tZS:\t"+ str(anzahlNummer))		#
  		etikett.close()														#Druck-Datei schließen
+      		anzahlNummer += 1													#Laufvariable erhöhen
 	else:
 		os.system("lpr -P  "+drucker_name+" "+ datei_druck) 									#Befehl an das System zum Drucken
 
